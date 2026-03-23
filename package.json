@@ -6,7 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint app components hooks lib services types next.config.ts",
+    "dev:frontend": "next dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "db:up": "docker compose up -d postgres redis",
+    "db:down": "docker compose down",
+    "medusa:migrate": "npx --prefix backend medusa db:migrate",
+    "medusa:seed": "npm --prefix backend run seed",
+    "setup:medusa": "./scripts/setup-medusa.sh",
+    "docker:prod:up": "docker compose --env-file .env.docker -f docker-compose.prod.yml up -d --build",
+    "docker:prod:down": "docker compose --env-file .env.docker -f docker-compose.prod.yml down",
+    "docker:prod:logs": "docker compose --env-file .env.docker -f docker-compose.prod.yml logs -f"
   },
   "dependencies": {
     "next": "16.2.1",

@@ -1,65 +1,62 @@
-import Image from "next/image";
+import { Hero } from "@/components/home/hero";
+import { ProductGrid } from "@/components/product/product-grid";
+import { getProducts } from "@/services/medusa";
 
-export default function Home() {
+export default async function Home() {
+  const products = await getProducts();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div>
+      <Hero />
+      <div
+        aria-hidden="true"
+        className="h-28 bg-gradient-to-b from-[var(--kudu-hero)] via-[#e9decd]/45 to-[var(--background)]"
+      />
+      <section className="mx-auto w-full max-w-4xl px-6 py-12 text-center md:px-10">
+        <p className="text-base leading-7 text-zinc-700">
+          We bring you products sourced from across the world-delivered right to
+          your door.
+        </p>
+        <p className="mt-4 text-base leading-7 text-zinc-700">
+          We partner with makers and suppliers worldwide to ensure authenticity,
+          quality, and fair value.
+        </p>
+        <p className="mt-4 text-base font-medium leading-7 text-zinc-900">
+          Shop global. Experience local convenience.
+        </p>
+      </section>
+      <section className="mx-auto w-full max-w-7xl px-6 py-14 md:px-10">
+        <div className="flex items-end justify-between">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+              The monthly curation
+            </p>
+            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-zinc-900">
+              New Arrivals
+            </h2>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="mt-8">
+          <ProductGrid products={products} />
         </div>
-      </main>
+        <p className="mx-auto mt-10 max-w-2xl text-center text-sm leading-6 tracking-wide text-zinc-700">
+          Help us bring the worldwide products you want to South Africa.
+        </p>
+        <form className="mx-auto mt-6 flex w-full max-w-xl flex-col gap-3 sm:flex-row">
+          <input
+            type="email"
+            placeholder="Leave your email"
+            className="h-11 flex-1 bg-white px-4 text-sm outline-none ring-1 ring-zinc-300 focus:ring-zinc-500"
+            required
+          />
+          <button
+            type="submit"
+            className="h-11 bg-zinc-900 px-5 text-xs font-medium uppercase tracking-[0.16em] text-white"
+          >
+            Notify me
+          </button>
+        </form>
+      </section>
     </div>
   );
 }
