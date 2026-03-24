@@ -19,6 +19,7 @@ import {
   createCart,
   getCart,
   getRegionCountryCodes,
+  resolveRegionId,
   listShippingOptions,
   removeLineItem,
   updateCartDetails,
@@ -29,9 +30,6 @@ import { getStoredCustomerToken } from "@/services/customer-auth";
 import type { Cart } from "@/types/cart";
 
 const CART_STORAGE_KEY = "kudu_cart_id";
-const DEFAULT_REGION_ID =
-  process.env.NEXT_PUBLIC_MEDUSA_REGION_ID ?? "reg_01";
-
 type CartContextValue = {
   cart: Cart | null;
   isLoading: boolean;
@@ -69,7 +67,12 @@ async function ensureCart(existingCartId: string | null) {
     }
   }
 
-  const newCart = await createCart(DEFAULT_REGION_ID);
+  const regionId = await resolveRegionId(appConfig.defaultRegionCode);
+  if (!regionId) {
+    throw new Error("Could not resolve a valid Medusa region.");
+  }
+
+  const newCart = await createCart(regionId);
   localStorage.setItem(CART_STORAGE_KEY, newCart.id);
   return newCart;
 }
@@ -139,8 +142,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       billingCountryCode?: string;
     }) => {
       if (!cart) return null;
+      const fallbackRegionId = await resolveRegionId(appConfig.defaultRegionCode);
       const allowedCountries = await getRegionCountryCodes(
-        cart.region_id ?? DEFAULT_REGION_ID,
+        cart.region_id ?? fallbackRegionId ?? "",
       );
       const shippingCode = input.countryCode.toUpperCase();
       if (

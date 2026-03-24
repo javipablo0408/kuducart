@@ -358,6 +358,8 @@ export async function updateCartDetails(
 }
 
 export async function getRegionCountryCodes(regionId: string) {
+  if (!regionId) return [];
+
   const data = await httpClient<RegionsResponse>(
     storeUrl(`/store/regions?id[]=${regionId}`),
     {
@@ -370,6 +372,28 @@ export async function getRegionCountryCodes(regionId: string) {
   const region = data.regions[0];
   if (!region?.countries?.length) return [];
   return region.countries.map((country) => country.iso_2.toUpperCase());
+}
+
+export async function resolveRegionId(preferredCountryCode?: string) {
+  if (REGION_ID) return REGION_ID;
+
+  const data = await httpClient<RegionsResponse>(storeUrl("/store/regions"), {
+    method: "GET",
+    headers: getHeaders(),
+    cache: "no-store",
+  });
+
+  if (!data.regions.length) return null;
+
+  if (preferredCountryCode) {
+    const preferred = preferredCountryCode.toLowerCase();
+    const byCountry = data.regions.find((region) =>
+      region.countries?.some((country) => country.iso_2.toLowerCase() === preferred),
+    );
+    if (byCountry?.id) return byCountry.id;
+  }
+
+  return data.regions[0]?.id ?? null;
 }
 
 export async function listShippingOptions(cartId: string) {
