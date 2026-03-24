@@ -39,15 +39,19 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   return (
     <section className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-12 md:grid-cols-2 md:gap-14 md:px-10">
-      <div className="relative aspect-square overflow-hidden bg-zinc-200">
+      <div className="relative aspect-square overflow-hidden bg-zinc-100">
         {product.image ? (
-          <Image
-            src={product.image}
-            alt={product.title}
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover"
-          />
+          <div className="absolute inset-4 md:inset-6">
+            <div className="relative h-full w-full">
+              <Image
+                src={product.image}
+                alt={product.title}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-contain object-center"
+              />
+            </div>
+          </div>
         ) : (
           <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.16em] text-zinc-500">
             No image
