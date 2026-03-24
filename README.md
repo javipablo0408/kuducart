@@ -103,7 +103,39 @@ Archivos nuevos:
 - `Dockerfile.frontend`
 - `backend/Dockerfile`
 - `docker-compose.prod.yml`
+- `docker-compose.prod.swarm.yml` (solo si usas **Swarm**)
 - `.env.docker.example`
+
+### Portainer: Swarm vs Docker “normal”
+
+| Tu endpoint en Portainer | Archivo compose | Notas |
+|--------------------------|-----------------|--------|
+| **Docker** (standalone) | `docker-compose.prod.yml` | Permite `build:` al desplegar. Lo más simple. |
+| **Swarm** | `docker-compose.prod.swarm.yml` | **No** hay `build:`. Debes construir y subir imágenes y poner `MEDUSA_IMAGE` + `FRONTEND_IMAGE`. |
+
+**Opción A (recomendada si puedes):** en Portainer añade un entorno **Docker** (no Swarm) y despliega con `docker-compose.prod.yml`.
+
+**Opción B (si solo tienes Swarm):** usa `docker-compose.prod.swarm.yml` y antes en tu PC o en CI:
+
+```bash
+# Sustituye REGISTRY por tu usuario Docker Hub o ghcr.io/tu-org/...
+docker build -f backend/Dockerfile -t REGISTRY/kuducart-medusa:latest ./backend
+docker build -f Dockerfile.frontend \
+  --build-arg NEXT_PUBLIC_MEDUSA_URL=https://api.kuducart.co.za \
+  --build-arg NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_xxx \
+  --build-arg NEXT_PUBLIC_MEDUSA_REGION_ID=reg_xxx \
+  --build-arg NEXT_PUBLIC_MEDUSA_PAYMENT_PROVIDER_ID=pp_system_default \
+  -t REGISTRY/kuducart-frontend:latest .
+docker push REGISTRY/kuducart-medusa:latest
+docker push REGISTRY/kuducart-frontend:latest
+```
+
+En Portainer (variables del stack) añade además:
+
+- `MEDUSA_IMAGE=REGISTRY/kuducart-medusa:latest`
+- `FRONTEND_IMAGE=REGISTRY/kuducart-frontend:latest`
+
+> Si `medusa` arranca antes que Postgres esté listo, puede fallar una vez; con `restart_policy: on-failure` suele levantarse solo al reintentar.
 
 ### 1) Preparar variables
 
